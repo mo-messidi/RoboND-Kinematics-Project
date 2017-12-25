@@ -5,19 +5,10 @@
 [image1]: ./misc_images/misc4.png
 [image2]: ./misc_images/misc3.png
 
-## [Rubric](https://review.udacity.com/#!/rubrics/972/view) Points
-### Here I will consider the rubric points individually and describe how I addressed each point in my implementation.  
-
----
-### Writeup / README
-
-
-### Kinematic Analysis
 
 The Kuka-arm used in this project is a SCARA serial manipulator consisting of 6 revolute joints.
 
-
-### Forward Kinematics
+### Kinematic Analysis
 The following orgins locations and axes orientations were used for the project.
 
 ![alt text][image1]
@@ -55,19 +46,77 @@ To get the total transformation from T0 to the gripper joint (T7) the following 
 
    T0_7 =  T0_1 * T1_2 * T2_3 * T3_4 * T4_5 * T5_6 * T6_7
 
-### Reverse Kinematics
-And here's where you can draw out and show your math for the derivation of your theta angles. 
+
+Becuase there is a discripency between the URDF file axes and the ones above the following rotatonal transformations were used to compensate for that difference at the Gripper (T7) were r, p, y are row, pitch and yaw respectively.
+
+
+        ROT_x = Matrix([[1, 0, 0],
+            [0, cos(r), -sin(r)],
+            [0, sin(r), cos(r)]])
+
+        ROT_y = Matrix([[cos(p), 0, sin(p)],
+           		 [0, 1, 0],
+           	       [-sin(p), 0, cos(p)]])
+
+        ROT_z = Matrix([[cos(y), -sin(y), 0],
+         	   [sin(y), cos(y), 0],
+         	   [0, 0, 1]])
+
+        ROT_GRIP = ROT_z * ROT_y * ROT_x
+        
+        ROT_URDFtoGRIP = ROT_z.subs(y, radians(180)) * ROT_y.subs(p, radians(-90))
+
+        ROT_GRIP = ROT_GRIP * ROT_URDFtoGRIP
+
+The gripper center (WC) was then calulated (symbolically) from the gripper position and offset using the equation below.
+
+        POS_GRIP = Matrix([[px],
+            		[py],
+           		 [pz]])
+
+	GRIP_OFFSET = 0.303
+
+        WC = POS_GRIP - (GRIP_OFFSET) * ROT_GRIP[:,2]
+        
+After that the theta angles (called q above) were calulated for each joint.
+
+For theta1 the following equation was used.
+
+theta1 = atan2(WC[1],WC[0])
+
+For theta2 and theta3 some triganomitry was used as shown in the figure below.
 
 ![alt text][image2]
 
+
+        #triangle for theta2 and theta3
+        side_a = 1.501
+        side_b = sqrt(pow((sqrt(WC[0]*WC[0] + WC[1]*WC[1]) - 0.35), 2) + pow((WC[2] - 0.75), 2))
+        side_c = 1.25
+
+        angle_a = acos((side_b * side_b + side_c * side_c - side_a * side_a) / (2 * side_b * 	   side_c))
+        angle_b = acos((side_a * side_a + side_c * side_c - side_b * side_b) / (2 * side_a * side_c))
+        angle_c = acos((side_a * side_a + side_b * side_b - side_c * side_c) / (2 * side_a * side_b))
+        
+        theta2 = pi / 2 - angle_a - atan2(WC[2] - 0.75, sqrt(WC[0] * WC[0] + WC[1]) - 0.35)
+        theta3 = pi / 2 - (angle_b + 0.036)
+        
+To find theta4, 5 and 6, first a rotation matrix of these joints (4, 5 and 6 ) was calulated and then the Euler angles (theta4, 5 ,6) were obtained from the rotation matrix.
+
+	#Rotation matrix for joints 4,5,6
+        R0_3 = T0_1[0:3,0:3] * T1_2[0:3,0:3] * T2_3[0:3,0:3]
+        R0_3 = R0_3.evalf(subs={q1: theta1, q2: theta2, q3: theta3})
+
+        R3_6 = R0_3.inv("LU") * ROT_GRIP
+
+        #Euler angles from rotation matrix
+        theta4 = atan2(R3_6[2,2], -R3_6[0,2])
+        theta5 = atan2(sqrt(R3_6[0,2]*R3_6[0,2] + R3_6[2,2]*R3_6[2,2]),R3_6[1,2])
+        theta6 = atan2(-R3_6[1,1], R3_6[1,0])
+
+
+
 ### Project Implementation
-
-#### 1. Fill in the `IK_server.py` file with properly commented python code for calculating Inverse Kinematics based on previously performed Kinematic Analysis. Your code must guide the robot to successfully complete 8/10 pick and place cycles. Briefly discuss the code you implemented and your results. 
-
-
-Here I'll talk about the code, what techniques I used, what worked and why, where the implementation might fail and how I might improve it if I were going to pursue this project further.  
-
-
-And just for fun, another example image:
+After all the Forward and Reverse Kinematics calulations were done and coded into the IK_server.py script. The project was ready for tested and it performed as desired. Given the position of a target and of a final placement position the serial manipulator was able to grip the target and move it to its specified final position.
 
 
