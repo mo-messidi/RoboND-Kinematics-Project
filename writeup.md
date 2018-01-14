@@ -88,7 +88,7 @@ For theta2 and theta3 some triganomitry was used as shown in the figure below.
 
 ![alt text][image2]
 
-Since sides a, b, c of the triagle are known values angles a, b, c were obtained using the SSS trangle rules. Theta3 was then found using the right triangle rules followed by the complement property and Theta 4 was found using the complement property
+Since sides a, b, c are known values (simple distance calucation used to get side b), angles a, b, c were obtained using the SSS triangle rules. Theta2 was then found using the right triangle rules, for the triangle right angled at point X, followed by the angle complement property and finally, theta3 was found using the complement property (a small angle value of 0.036 was used to account for the 0.054m inalignment of link4 from the axis and form a full right angle along with angle b and theta3)
 
         #triangle for theta2 and theta3
         side_a = 1.501
