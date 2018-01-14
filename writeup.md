@@ -4,7 +4,7 @@
 
 [image1]: ./misc_images/misc4.png
 [image2]: ./misc_images/misc3.png
-
+[image3]: ./misc_images/misc5.png
 
 The Kuka-arm used in this project is a SCARA serial manipulator consisting of 6 revolute joints.
 
@@ -88,6 +88,7 @@ For theta2 and theta3 some triganomitry was used as shown in the figure below.
 
 ![alt text][image2]
 
+Since sides a, b, c of the triagle are known values angles a, b, c were obtained using the SSS trangle rules. Theta3 was then found using the right triangle rules followed by the complement property and Theta 4 was found using the complement property
 
         #triangle for theta2 and theta3
         side_a = 1.501
@@ -119,4 +120,4 @@ To find theta4, 5 and 6, first a rotation matrix of these joints (4, 5 and 6 ) w
 ### Project Implementation
 After all the Forward and Reverse Kinematics calulations were done and coded into the IK_server.py script. The project was ready for tested and it performed as desired. Given the position of a target and of a final placement position the serial manipulator was able to grip the target and move it to its specified final position.
 
-
+![alt text][image3]

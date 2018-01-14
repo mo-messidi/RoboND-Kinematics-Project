@@ -18,6 +18,15 @@ from geometry_msgs.msg import Pose
 from mpmath import *
 from sympy import *
 
+# Create symbols globally for faster runtime
+# alpha = twist angle
+# a = link length
+# d = link offset
+# q = joint vars
+q1, q2, q3, q4, q5, q6, q7 = symbols('q1:8')
+d1, d2, d3, d4, d5, d6, d7 = symbols('d1:8')
+a0, a1, a2, a3, a4, a5, a6 = symbols('a0:7')
+alpha0, alpha1, alpha2, alpha3, alpha4, alpha5, alpha6 = symbols('alpha0:7')
 
 def handle_calculate_IK(req):
     rospy.loginfo("Received %s eef-poses from the plan" % len(req.poses))
@@ -25,17 +34,6 @@ def handle_calculate_IK(req):
         print "No valid poses received"
         return -1
     else:
-
-        ### Your FK code here
-        # Create symbols
-        # alpha = twist angle
-        # a = link length
-        # d = link offset
-        # q = joint vars
-        q1, q2, q3, q4, q5, q6, q7 = symbols('q1:8')
-        d1, d2, d3, d4, d5, d6, d7 = symbols('d1:8')
-        a0, a1, a2, a3, a4, a5, a6 = symbols('a0:7')
-        alpha0, alpha1, alpha2, alpha3, alpha4, alpha5, alpha6 = symbols('alpha0:7')
     
         # Create Modified DH parameters
         dh_params = {
@@ -55,7 +53,7 @@ def handle_calculate_IK(req):
                    [sin(q) * sin(alpha), cos(q) * sin(alpha), cos(alpha), cos(alpha) * d],
                    [0, 0, 0, 1]])
         return tf_matrix
-    #
+    
     # Create individual transformation matrices
     T0_1 = TF_Matrix(a0,alpha0,d1,q1).subs(dh_params)
     T1_2 = TF_Matrix(a1,alpha1,d2,q2).subs(dh_params)
@@ -68,9 +66,6 @@ def handle_calculate_IK(req):
     T0_7 =  T0_1 * T1_2 * T2_3 * T3_4 * T4_5 * T5_6 * T6_7
     
     # Extract rotation matrices from the transformation matrices
-    
-    #
-        ###
 
         # Initialize service response
     joint_trajectory_list = []
