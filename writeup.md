@@ -121,3 +121,6 @@ To find theta4, 5 and 6, first a rotation matrix of these joints (4, 5 and 6 ) w
 After all the Forward and Reverse Kinematics calulations were done and coded into the IK_server.py script. The project was ready for tested and it performed as desired. Given the position of a target and of a final placement position the serial manipulator was able to grip the target and move it to its specified final position.
 
 ![alt text][image3]
+
+### Results
+The robot managed to pick and place the randomly generated cylinder in 8 out of 9 runs (best case). The grasping errors in the 9th run can be attributed to numerical instabilites. These instabilities were reduced by avoiding the Matrix Inverse function when calulating R3_6 and attemping to make the calulation using the Matric Transpose function instead.
