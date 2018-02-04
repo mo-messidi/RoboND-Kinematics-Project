@@ -42,11 +42,47 @@ Indivitual transformation matricies for each joint-to-joint transformation were 
     T5_6 = TF_Matrix(a5,alpha5,d6,q6).subs(dh_params)
     T6_7 = TF_Matrix(a6,alpha6,d7,q7).subs(dh_params)
 
+The values obtained each of these matrices were as follows:
+
+    T0_1 = [[cos(q1), -sin(q1), 0, 0],
+           [sin(q1), cos(q1), 0, 0],
+           [0, 0, 1, 0.75],
+           [0, 0, 0, 1]]
+	   
+    T1_2 = [[cos(q2 - 0.5*pi), -sin(q2 - 0.5*pi), 0, 0.35],
+           [0, 0, 1, 0],
+           [-sin(q2 - 0.5*pi), -cos(q2 - 0.5*pi), 0, 0],
+           [0, 0, 0, 1]]
+	   
+    T2_3 = [[cos(q3), -sin(q3), 0, 1.25],
+           [sin(q3), cos(q3), 0, 0],
+           [0, 0, 1, 0],
+           [0, 0, 0, 1]]
+	    
+    T3_4 = [[cos(q4), -sin(q4), 0, -0.054],
+            [0, 0, 1, 1.5],
+            [-sin(q4), -cos(q4), 0, 0],
+            [0, 0, 0, 1]]
+	    
+     T4_5 = [[cos(q5), -sin(q5), 0, 0],
+            [0, 0, -1, 0],
+            [sin(q5), cos(q5), 0, 0],
+            [0, 0, 0, 1]]
+	    
+     T5_6 = [[cos(q6), -sin(q6), 0, 0],
+            [0, 0, 1, 0],
+            [-sin(q6), -cos(q6), 0, 0],
+            [0, 0, 0, 1]]
+	    
+     T6_7 = [[1, 0, 0, a6],
+            [0, 1, 0, 0],
+            [0, 0, 1, 0.303],
+            [0, 0, 0, 1]
+
 To get the total transformation from T0 to the gripper joint (T7) the following equation was used.
 
     T0_7 =  T0_1 * T1_2 * T2_3 * T3_4 * T4_5 * T5_6 * T6_7
-
-
+    
 Becuase there is a discripency between the URDF file axes and the ones above the following rotatonal transformations were used to compensate for that difference at the Gripper (T7) were r, p, y are row, pitch and yaw respectively.
 
 
